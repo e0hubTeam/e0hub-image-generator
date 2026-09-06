@@ -1,0 +1,25 @@
+# Local secrets and environment files
+config.local.json
+.env
+.env.*
+!.env.example
+
+# Generated images
+generated-images/
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Test and tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

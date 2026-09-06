@@ -1,0 +1,8 @@
+interface:
+  display_name: "E0Hub Image 生图"
+  short_description: "引导配置本地密钥，并通过文字或多张参考图生成图片"
+  brand_color: "#1677FF"
+  default_prompt: "使用 $e0hub-image 引导我配置密钥并生成一张图片。"
+
+policy:
+  allow_implicit_invocation: true
