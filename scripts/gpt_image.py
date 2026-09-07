@@ -355,7 +355,18 @@ def generate(args: argparse.Namespace) -> int:
         headers["Content-Type"] = content_type
         url = endpoint_url(str(config["base_url"]), str(config["edit_endpoint"]))
     else:
-        body = json.dumps(dict(common_fields), ensure_ascii=False).encode("utf-8")
+        # The JSON endpoint expects `n` as a number; form-data fields remain strings.
+        payload = {
+            "model": str(config["model"]),
+            "prompt": args.prompt,
+            "n": args.count,
+            "size": args.size,
+            "quality": args.quality,
+            "background": args.background,
+            "output_format": args.output_format,
+            "response_format": str(config["response_format"]),
+        }
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         headers["Content-Type"] = "application/json"
         url = endpoint_url(
             str(config["base_url"]), str(config["generation_endpoint"])
