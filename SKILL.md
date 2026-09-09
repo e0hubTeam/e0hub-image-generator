@@ -1,15 +1,25 @@
 ---
 name: e0hub-image
-description: 引导用户配置并保存 GPT Image 2 API 密钥，根据文字描述或一张、多张参考图生成图片。适用于文生图、图生图、风格调整和多参考图合成。
+description: 引导用户选择 E0Hub 图片模型、配置并保存 API 密钥，再根据文字描述或一张、多张参考图生成图片。适用于文生图、图生图、风格调整和多参考图合成。
 ---
 
 # E0Hub Image 生图
 
 通过对话澄清用户真正想要的画面，然后调用 `scripts/gpt_image.py` 生成并保存图片。
 
+## 模型选择
+
+每次开始新的生图任务，先确认用户要使用哪个模型。如果当前消息没有明确指定模型，必须先询问并等待用户选择，不要代替用户发起生成请求：
+
+- `gpt-image-2.5-sunburst`：升级版，也是默认推荐模型
+- `gpt-image-2.5-flare`：升级版
+- `gpt-image-2`：经典版
+
+用户回复“默认模型”时使用 `gpt-image-2.5-sunburst`。如果用户已经明确写出上述模型之一，视为已经完成选择，无需重复询问。后续生成命令必须通过 `--model` 传入用户选择的准确模型名。
+
 ## 密钥配置
 
-每次开始生图任务时，先在本技能目录运行：
+确认模型后，在本技能目录运行：
 
 ```powershell
 python scripts/gpt_image.py config-status
@@ -39,13 +49,13 @@ python scripts/gpt_image.py config-status
 在技能目录运行文生图：
 
 ```powershell
-python scripts/gpt_image.py generate --prompt "完整提示词" --size 1024x1024 --quality auto --output-format png --count 1 --output-dir "输出目录"
+python scripts/gpt_image.py generate --model "用户选择的模型" --prompt "完整提示词" --size 1024x1024 --quality auto --output-format png --count 1 --output-dir "输出目录"
 ```
 
 使用一张或多张参考图：
 
 ```powershell
-python scripts/gpt_image.py generate --prompt "完整提示词" --reference "第一张图片路径" --reference "第二张图片路径" --size 1024x1024 --quality auto --output-format png --count 1 --output-dir "输出目录"
+python scripts/gpt_image.py generate --model "用户选择的模型" --prompt "完整提示词" --reference "第一张图片路径" --reference "第二张图片路径" --size 1024x1024 --quality auto --output-format png --count 1 --output-dir "输出目录"
 ```
 
 把结果写入当前任务工作区的 `generated-images` 目录，不要写入技能目录。调用时始终给 `--output-dir` 传入该目录的绝对路径。脚本输出 JSON；生成成功后向用户展示绝对文件链接，并在界面支持时直接预览图片。

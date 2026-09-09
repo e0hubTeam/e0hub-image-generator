@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Configure and call the GPT Image 2 API used by this personal skill."""
+"""Configure and call the E0Hub image API used by this personal skill."""
 
 from __future__ import annotations
 
@@ -28,11 +28,16 @@ CONFIG_PATH = Path(
 )
 DEFAULT_CONFIG = {
     "base_url": "https://www.e0hub.com",
-    "model": "gpt-image-2",
+    "model": "gpt-image-2.5-sunburst",
     "generation_endpoint": "/v1/images/generations",
     "edit_endpoint": "/v1/images/edits",
     "response_format": "url",
 }
+SUPPORTED_MODELS = (
+    "gpt-image-2.5-sunburst",
+    "gpt-image-2.5-flare",
+    "gpt-image-2",
+)
 SUPPORTED_SIZES = (
     "1024x1024",
     "1536x1024",
@@ -317,7 +322,7 @@ def generate(args: argparse.Namespace) -> int:
         )
 
     common_fields = [
-        ("model", str(config["model"])),
+        ("model", args.model),
         ("prompt", args.prompt),
         ("n", str(args.count)),
         ("size", args.size),
@@ -332,7 +337,7 @@ def generate(args: argparse.Namespace) -> int:
             json.dumps(
                 {
                     "mode": "edit" if references else "generation",
-                    "model": config["model"],
+                    "model": args.model,
                     "reference_count": len(references),
                     "size": args.size,
                     "quality": args.quality,
@@ -357,7 +362,7 @@ def generate(args: argparse.Namespace) -> int:
     else:
         # The JSON endpoint expects `n` as a number; form-data fields remain strings.
         payload = {
-            "model": str(config["model"]),
+            "model": args.model,
             "prompt": args.prompt,
             "n": args.count,
             "size": args.size,
@@ -393,6 +398,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("clear-key", help="Remove the saved API key.")
 
     generate_parser = subparsers.add_parser("generate", help="Generate or edit images.")
+    generate_parser.add_argument("--model", choices=SUPPORTED_MODELS, required=True)
     generate_parser.add_argument("--prompt", required=True)
     generate_parser.add_argument("--reference", action="append", default=[])
     generate_parser.add_argument("--size", choices=SUPPORTED_SIZES, default="1024x1024")
